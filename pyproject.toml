@@ -1,0 +1,56 @@
+[tool.poetry]
+name = "labelimg"
+version = "2.0.0"
+description = "Graphical image annotation tool with bounding box support"
+authors = ["TzuTa Lin <tzu.ta.lin@gmail.com>", "Qiang Wang <wangqiang2015@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/heartexlabs/labelImg"
+repository = "https://github.com/heartexlabs/labelImg"
+keywords = ["image-annotation", "bounding-box", "computer-vision", "labeling"]
+
+[tool.poetry.scripts]
+labelimg = "labelimg.main:main"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.14"  # 扩展支持到Python 3.13
+PySide6 = ">=6.6.0"       # 需要更新PySide6以支持Python 3.13
+lxml = ">=5.1.0"          # 更新lxml到支持3.13的版本
+pillow = ">=10.2.0"
+typing-extensions = ">=4.10.0"  # 支持最新的类型注解特性
+
+[tool.poetry.dev-dependencies]
+pytest = ">=8.0.0"        # 更新测试工具以支持3.13
+pytest-cov = ">=5.0.0"
+black = ">=24.1.0"        # 确保代码格式化工具支持3.13语法
+isort = ">=5.13.2"
+mypy = ">=1.8.0"
+pre-commit = ">=3.6.0"
+ruff = ">=0.3.0"          # 更新代码检查工具支持3.13
+
+[tool.black]
+line-length = 88
+target-version = ['py310', 'py311', 'py312', 'py313']  # 添加3.13支持
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"  # 以3.13为目标版本
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "--cov=src/labelimg --cov-report=term-missing"
+
+[build-system]
+requires = ["poetry-core>=1.9.0"]  # 更新构建系统以支持3.13
+build-backend = "poetry.core.masonry.api"
