@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "labelimg"
-version = "2.0.1"
+version = "2.0.1.1"
 description = "Graphical image annotation tool with bounding box support"
 authors = ["TzuTa Lin <tzu.ta.lin@gmail.com>", "Qiang Wang <wangqiang2015@gmail.com>", "Junzhe Ye <yjz0918230128@foxmail.com>"]
 license = "MIT"
@@ -10,7 +10,7 @@ repository = "https://github.com/heartexlabs/labelImg"
 keywords = ["image-annotation", "bounding-box", "computer-vision", "labeling"]
 
 [tool.poetry.scripts]
-labelimg = "labelimg"
+labelimg = "labelimg.labelImg:main"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"
