@@ -1,35 +1,77 @@
-# ex: set ts=8 noet:
+# 基础配置
+PROJECT_NAME := labelimg
+PYTHON := python3.13
+POETRY := poetry
+SRC_DIR := src/labelimg
+TEST_DIR := tests
+DIST_DIR := dist
 
-all: qt5 test
+# 默认目标
+.DEFAULT_GOAL := help
 
-test: testpy3
+# 帮助信息
+help:  ## 显示帮助信息
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-testpy2:
-	python -m unittest discover tests
+# 环境管理
+env:  ## 创建并配置虚拟环境
+	$(POETRY) env use $(PYTHON)
+	$(POETRY) install --no-root
 
-testpy3:
-	python3 -m unittest discover tests
+update:  ## 更新依赖到最新兼容版本
+	$(POETRY) update
 
-qt4: qt4py2
+clean-env:  ## 清理虚拟环境
+	$(POETRY) env remove $(PYTHON)
+	rm -rf .venv
 
-qt5: qt5py3
+# 开发工具
+format:  ## 使用black和isort格式化代码
+	$(POETRY) run black $(SRC_DIR) $(TEST_DIR)
+	$(POETRY) run isort $(SRC_DIR) $(TEST_DIR)
 
-qt4py2:
-	pyrcc4 -py2 -o libs/resources.py resources.qrc
+lint:  ## 使用ruff和mypy检查代码
+	$(POETRY) run ruff check $(SRC_DIR) $(TEST_DIR)
+	$(POETRY) run mypy $(SRC_DIR)
 
-qt4py3:
-	pyrcc4 -py3 -o libs/resources.py resources.qrc
+check: format lint  ## 运行所有代码检查和格式化
 
-qt5py3:
-	pyrcc5 -o libs/resources.py resources.qrc
+# 测试
+test:  ## 运行所有测试
+	$(POETRY) run pytest $(TEST_DIR)
 
-clean:
-	rm -rf ~/.labelImgSettings.pkl *.pyc dist labelImg.egg-info __pycache__ build
+test-cov:  ## 运行测试并生成覆盖率报告
+	$(POETRY) run pytest $(TEST_DIR) --cov=$(SRC_DIR) --cov-report=html
 
-pip_upload:
-	python3 setup.py upload
+# 构建与打包
+build: check test  ## 构建项目分发包
+	$(POETRY) build --format=wheel
+	$(POETRY) build --format=sdist
 
-long_description:
-	restview --long-description
+install:  ## 本地安装项目
+	$(POETRY) install
 
-.PHONY: all
+# 运行应用
+run:  ## 直接运行应用
+	$(POETRY) run labelimg
+
+# 清理构建产物
+clean:  ## 清理构建和测试产物
+	rm -rf $(DIST_DIR)
+	rm -rf build
+	rm -rf *.egg-info
+	rm -rf .coverage
+	rm -rf htmlcov
+	find . -name "__pycache__" -exec rm -rf {} +
+	find . -name "*.pyc" -exec rm -f {} +
+	find . -name "*.pyo" -exec rm -f {} +
+
+# 发布到PyPI
+publish: build  ## 发布包到PyPI
+	$(POETRY) publish
+
+# 生成资源文件
+resources:  ## 编译Qt资源文件
+	$(POETRY) run pyside6-rcc $(SRC_DIR)/resources/resources.qrc -o $(SRC_DIR)/resources/resources_rc.py
+
+.PHONY: help env update clean-env format lint check test test-cov build install run clean publish resources
