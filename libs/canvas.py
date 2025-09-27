@@ -10,6 +10,7 @@ CURSOR_DRAW = Qt.CrossCursor
 CURSOR_MOVE = Qt.ClosedHandCursor
 CURSOR_GRAB = Qt.OpenHandCursor
 
+
 class Canvas(QWidget):
     zoomRequest = Signal(int)
     lightRequest = Signal(int)
@@ -116,7 +117,7 @@ class Canvas(QWidget):
                 current_width = abs(self.current[0].x() - pos.x())
                 current_height = abs(self.current[0].y() - pos.y())
                 self.parent().window().label_coordinates.setText(
-                        'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
+                    'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
 
                 color = self.drawing_line_color
                 if self.out_of_pixmap(pos):
@@ -178,7 +179,7 @@ class Canvas(QWidget):
                 current_width = abs(point1.x() - point3.x())
                 current_height = abs(point1.y() - point3.y())
                 self.parent().window().label_coordinates.setText(
-                        'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
+                    'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
             elif self.selected_shape and self.prev_point:
                 self.override_cursor(CURSOR_MOVE)
                 self.bounded_move_shape(self.selected_shape, pos)
@@ -191,7 +192,7 @@ class Canvas(QWidget):
                 current_width = abs(point1.x() - point3.x())
                 current_height = abs(point1.y() - point3.y())
                 self.parent().window().label_coordinates.setText(
-                        'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
+                    'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
             else:
                 # pan
                 delta = ev.pos() - self.pan_initial_pos
@@ -236,7 +237,7 @@ class Canvas(QWidget):
                 current_width = abs(point1.x() - point3.x())
                 current_height = abs(point1.y() - point3.y())
                 self.parent().window().label_coordinates.setText(
-                        'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
+                    'Width: %d, Height: %d / X: %d; Y: %d' % (current_width, current_height, pos.x(), pos.y()))
                 break
         else:  # Nothing found, clear highlights, reset state.
             if self.h_shape:
@@ -269,8 +270,8 @@ class Canvas(QWidget):
         if ev.button() == Qt.RightButton:
             menu = self.menus[bool(self.selected_shape_copy)]
             self.restore_cursor()
-            if not menu.exec_(self.mapToGlobal(ev.pos()))\
-               and self.selected_shape_copy:
+            if not menu.exec_(self.mapToGlobal(ev.pos())) \
+                    and self.selected_shape_copy:
                 # Cancel the move by deleting the shadow copy.
                 self.selected_shape_copy = None
                 self.repaint()

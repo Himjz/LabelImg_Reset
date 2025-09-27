@@ -1,10 +1,6 @@
-try:
-    from PySide6.QtGui import *
-    from PySide6.QtCore import *
-    from PySide6.QtWidgets import *
-except ImportError:
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
 
 
 class ToolBar(QToolBar):

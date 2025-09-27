@@ -1,16 +1,28 @@
 [tool.poetry]
 name = "labelimg"
-version = "2.0.1.1"
+version = "2.0.1.5"
 description = "Graphical image annotation tool with bounding box support"
 authors = ["TzuTa Lin <tzu.ta.lin@gmail.com>", "Qiang Wang <wangqiang2015@gmail.com>", "Junzhe Ye <yjz0918230128@foxmail.com>"]
 license = "MIT"
-#readme = "README.md"
 homepage = "https://github.com/heartexlabs/labelImg"
 repository = "https://github.com/heartexlabs/labelImg"
 keywords = ["image-annotation", "bounding-box", "computer-vision", "labeling"]
 
+# 关键修复：明确指定当前目录下的所有核心文件和目录
+packages = [
+    { include = "labelImg.py" },  # 主程序文件（确保文件名大小写与实际一致）
+    { include = "libs" },         # 包含libs目录及其所有内容
+]
+
+include = [
+    { path = "data", format = "wheel" },
+    { path = "i18n", format = "sdist" },   # 源码包包含
+]
+
+
 [tool.poetry.scripts]
-labelimg = "labelimg.labelImg:main"
+# 修复入口点：直接指向labelImg.py中的main函数
+labelimg = "labelImg:main"  # 确保labelImg.py中存在main()函数
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"
@@ -19,7 +31,11 @@ lxml = ">=5.1.0"
 pillow = ">=10.2.0"
 typing-extensions = ">=4.10.0"
 
-[tool.poetry.dev-dependencies]
+# 修复 deprecated 警告：使用新的分组语法
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
 pytest = ">=8.0.0"
 pytest-cov = ">=5.0.0"
 black = ">=24.1.0"
@@ -30,7 +46,7 @@ ruff = ">=0.3.0"
 
 [tool.black]
 line-length = 88
-target-version = ['py310', 'py311', 'py312', 'py313']  # 添加3.13支持
+target-version = ['py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -46,11 +62,6 @@ exclude = '''
 line-length = 88
 target-version = "py313"
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
-addopts = "--cov=src/labelimg --cov-report=term-missing"
-
 [build-system]
-requires = ["poetry-core>=1.9.0"]  # 更新构建系统以支持3.13
+requires = ["poetry-core>=1.9.0"]
 build-backend = "poetry.core.masonry.api"

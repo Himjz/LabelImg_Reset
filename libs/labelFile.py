@@ -1,13 +1,11 @@
 # Copyright (c) 2016 Tzutalin
 # Create by TzuTaLin <tzu.ta.lin@gmail.com>
 
-try:
-    from PySide6.QtGui import QImage
-except ImportError:
-    from PyQt4.QtGui import QImage
 
 import os.path
 from enum import Enum
+
+from PySide6.QtGui import QImage
 
 from libs.create_ml_io import CreateMLWriter
 from libs.pascal_voc_io import PascalVocWriter
@@ -36,7 +34,8 @@ class LabelFile(object):
         self.image_data = None
         self.verified = False
 
-    def save_create_ml_format(self, filename, shapes, image_path, image_data, class_list, line_color=None, fill_color=None, database_src=None):
+    def save_create_ml_format(self, filename, shapes, image_path, image_data, class_list, line_color=None,
+                              fill_color=None, database_src=None):
         img_folder_name = os.path.basename(os.path.dirname(image_path))
         img_file_name = os.path.basename(image_path)
 
@@ -49,7 +48,6 @@ class LabelFile(object):
         writer.verified = self.verified
         writer.write()
         return
-
 
     def save_pascal_voc_format(self, filename, shapes, image_path, image_data,
                                line_color=None, fill_color=None, database_src=None):

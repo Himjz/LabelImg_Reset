@@ -1,19 +1,11 @@
 from math import sqrt
-from libs.ustr import ustr
 import hashlib
 import re
 import sys
 
-try:
-    from PySide6.QtGui import *
-    from PySide6.QtCore import *
-    from PySide6.QtWidgets import *
-    QT5 = True
-except ImportError:
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
-    QT5 = False
-
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
 
 def new_icon(icon):
     return QIcon(':/' + icon)
@@ -80,7 +72,7 @@ def format_shortcut(text):
 
 
 def generate_color_by_text(text):
-    s = ustr(text)
+    s = text
     hash_code = int(hashlib.sha256(s.encode('utf-8')).hexdigest(), 16)
     r = int((hash_code / 255) % 255)
     g = int((hash_code / 65025) % 255)
@@ -97,21 +89,15 @@ def util_qt_strlistclass():
     return QStringList if have_qstring() else list
 
 
-def natural_sort(list, key=lambda s:s):
+def natural_sort(list, key=lambda s: s):
     """
     Sort the list into natural alphanumeric order.
     """
+
     def get_alphanum_key_func(key):
         convert = lambda text: int(text) if text.isdigit() else text
         return lambda s: [convert(c) for c in re.split('([0-9]+)', key(s))]
+
     sort_key = get_alphanum_key_func(key)
     list.sort(key=sort_key)
 
-
-# QT4 has a trimmed method, in QT5 this is called strip
-if QT5:
-    def trimmed(text):
-        return text.strip()
-else:
-    def trimmed(text):
-        return text.trimmed()

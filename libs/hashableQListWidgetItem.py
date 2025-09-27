@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
+
 try:
     from PySide6.QtGui import *
     from PySide6.QtCore import *
@@ -12,9 +13,11 @@ except ImportError:
     # http://stackoverflow.com/questions/21217399/pyqt4-qtcore-qvariant-object-instead-of-a-string
     if sys.version_info.major >= 3:
         import sip
+
         sip.setapi('QVariant', 2)
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
+
 
 # PyQt5: TypeError: unhashable type: 'QListWidgetItem'
 

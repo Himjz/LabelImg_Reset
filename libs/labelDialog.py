@@ -1,12 +1,7 @@
-try:
-    from PySide6.QtGui import *
-    from PySide6.QtCore import *
-    from PySide6.QtWidgets import *
-except ImportError:
-    from PyQt4.QtGui import *
-    from PyQt4.QtCore import *
-
-from libs.utils import new_icon, label_validator, trimmed
+from PySide6.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import *
+from libs.utils import new_icon, label_validator
 
 BB = QDialogButtonBox
 
@@ -48,11 +43,11 @@ class LabelDialog(QDialog):
         self.setLayout(layout)
 
     def validate(self):
-        if trimmed(self.edit.text()):
+        if self.edit.text():
             self.accept()
 
     def post_process(self):
-        self.edit.setText(trimmed(self.edit.text()))
+        self.edit.setText(self.edit.text())
 
     def pop_up(self, text='', move=True):
         """
@@ -84,10 +79,10 @@ class LabelDialog(QDialog):
             if cursor_pos.y() > max_global.y():
                 cursor_pos.setY(max_global.y())
             self.move(cursor_pos)
-        return trimmed(self.edit.text()) if self.exec_() else None
+        return self.edit.text() if self.exec_() else None
 
     def list_item_click(self, t_qlist_widget_item):
-        text = trimmed(t_qlist_widget_item.text())
+        text = t_qlist_widget_item.text()
         self.edit.setText(text)
 
     def list_item_double_click(self, t_qlist_widget_item):

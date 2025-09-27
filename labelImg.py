@@ -35,7 +35,6 @@ from libs.yolo_io import YoloReader
 from libs.yolo_io import TXT_EXT
 from libs.create_ml_io import CreateMLReader
 from libs.create_ml_io import JSON_EXT
-from libs.ustr import ustr
 from libs.hashableQListWidgetItem import HashableQListWidgetItem
 
 __appname__ = 'labelImg'
@@ -453,7 +452,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # 应用状态
         self.image = QImage()
-        self.file_path = ustr(default_filename)
+        self.file_path = default_filename
         self.last_open_dir = None
         self.recent_files = []
         self.max_recent = 7
@@ -481,8 +480,8 @@ class MainWindow(QMainWindow, WindowMixin):
         self.move(position)
 
         # 保存目录设置
-        save_dir = ustr(settings.get(SETTING_SAVE_DIR, None))
-        self.last_open_dir = ustr(settings.get(SETTING_LAST_OPEN_DIR, None))
+        save_dir = settings.get(SETTING_SAVE_DIR, None)
+        self.last_open_dir = settings.get(SETTING_LAST_OPEN_DIR, None)
         if self.default_save_dir is None and save_dir is not None and os.path.exists(save_dir):
             self.default_save_dir = save_dir
             self.statusBar().showMessage('%s 已启动。标注将保存到 %s' %
@@ -749,7 +748,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
     # 文件列表双击事件
     def file_item_double_clicked(self, item=None):
-        self.cur_img_idx = self.m_img_list.index(ustr(item.text()))
+        self.cur_img_idx = self.m_img_list.index(item.text())
         filename = self.m_img_list[self.cur_img_idx]
         if filename:
             self.load_file(filename)
@@ -858,7 +857,7 @@ class MainWindow(QMainWindow, WindowMixin):
         self.combo_box.update_items(unique_text_list)
 
     def save_labels(self, annotation_file_path):
-        annotation_file_path = ustr(annotation_file_path)
+        annotation_file_path = annotation_file_path
         if self.label_file is None:
             self.label_file = LabelFile()
             self.label_file.verified = self.canvas.verified
@@ -1074,9 +1073,9 @@ class MainWindow(QMainWindow, WindowMixin):
         self.canvas.setEnabled(False)
         if file_path is None:
             file_path = self.settings.get(SETTING_FILENAME)
-        file_path = ustr(file_path)
+        file_path = file_path
 
-        unicode_file_path = ustr(file_path)
+        unicode_file_path = file_path
         unicode_file_path = os.path.abspath(unicode_file_path)
 
         # 高亮文件项
@@ -1232,7 +1231,7 @@ class MainWindow(QMainWindow, WindowMixin):
         settings[SETTING_RECENT_FILES] = self.recent_files
         settings[SETTING_ADVANCE_MODE] = not self._beginner
         if self.default_save_dir and os.path.exists(self.default_save_dir):
-            settings[SETTING_SAVE_DIR] = ustr(self.default_save_dir)
+            settings[SETTING_SAVE_DIR] = self.default_save_dir
         else:
             settings[SETTING_SAVE_DIR] = ''
 
@@ -1260,21 +1259,21 @@ class MainWindow(QMainWindow, WindowMixin):
             for file in files:
                 if file.lower().endswith(tuple(extensions)):
                     relative_path = os.path.join(root, file)
-                    path = ustr(os.path.abspath(relative_path))
+                    path = os.path.abspath(relative_path)
                     images.append(path)
         natural_sort(images, key=lambda x: x.lower())
         return images
 
     def change_save_dir_dialog(self, _value=False):
         if self.default_save_dir is not None:
-            path = ustr(self.default_save_dir)
+            path = self.default_save_dir
         else:
             path = '.'
 
-        dir_path = ustr(QFileDialog.getExistingDirectory(self,
-                                                         '%s - 将标注保存到目录' % __appname__, path,
-                                                         QFileDialog.ShowDirsOnly
-                                                         | QFileDialog.DontResolveSymlinks))
+        dir_path = QFileDialog.getExistingDirectory(self,
+                                                 '%s - 将标注保存到目录' % __appname__, path,
+                                                 QFileDialog.ShowDirsOnly
+                                                 | QFileDialog.DontResolveSymlinks)
 
         if dir_path is not None and len(dir_path) > 1:
             self.default_save_dir = dir_path
@@ -1291,7 +1290,7 @@ class MainWindow(QMainWindow, WindowMixin):
             self.statusBar().show()
             return
 
-        path = os.path.dirname(ustr(self.file_path)) \
+        path = os.path.dirname(self.file_path) \
             if self.file_path else '.'
         if self.label_file_format == LabelFileFormat.PASCAL_VOC:
             filters = "打开标注XML文件 (%s)" % ' '.join(['*.xml'])
@@ -1315,12 +1314,12 @@ class MainWindow(QMainWindow, WindowMixin):
         else:
             default_open_dir_path = os.path.dirname(self.file_path) if self.file_path else '.'
         if silent != True:
-            target_dir_path = ustr(QFileDialog.getExistingDirectory(self,
-                                                                    '%s - 打开目录' % __appname__,
-                                                                    default_open_dir_path,
-                                                                    QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks))
+            target_dir_path = QFileDialog.getExistingDirectory(self,
+                                                        '%s - 打开目录' % __appname__,
+                                                        default_open_dir_path,
+                                                        QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks)
         else:
-            target_dir_path = ustr(default_open_dir_path)
+            target_dir_path = default_open_dir_path
         self.last_open_dir = target_dir_path
         self.import_dir_images(target_dir_path)
         self.default_save_dir = target_dir_path
@@ -1418,7 +1417,7 @@ class MainWindow(QMainWindow, WindowMixin):
     def open_file(self, _value=False):
         if not self.may_continue():
             return
-        path = os.path.dirname(ustr(self.file_path)) if self.file_path else '.'
+        path = os.path.dirname(self.file_path) if self.file_path else '.'
         formats = ['*.%s' % fmt.data().decode("ascii").lower() for fmt in QImageReader.supportedImageFormats()]
         filters = "图像和标签文件 (%s)" % ' '.join(formats + ['*%s' % LabelFile.suffix])
         filename, _ = QFileDialog.getOpenFileName(self, '%s - 选择图像或标签文件' % __appname__, path, filters)
@@ -1432,11 +1431,11 @@ class MainWindow(QMainWindow, WindowMixin):
             # 可以弹出提示或直接返回
             QMessageBox.warning(self, "警告", "没有可保存的文件，请先打开一张图片")
             return
-        if self.default_save_dir is not None and len(ustr(self.default_save_dir)):
+        if self.default_save_dir is not None and len(self.default_save_dir):
             if self.file_path:
                 image_file_name = os.path.basename(self.file_path)
                 saved_file_name = os.path.splitext(image_file_name)[0]
-                saved_path = os.path.join(ustr(self.default_save_dir), saved_file_name)
+                saved_path = os.path.join(self.default_save_dir, saved_file_name)
                 self._save_file(saved_path)
         else:
             image_file_dir = os.path.dirname(self.file_path)
@@ -1461,7 +1460,7 @@ class MainWindow(QMainWindow, WindowMixin):
         dlg.selectFile(filename_without_extension)
         dlg.setOption(QFileDialog.DontUseNativeDialog, False)
         if dlg.exec():
-            full_file_path = ustr(dlg.selectedFiles()[0])
+            full_file_path = dlg.selectedFiles()[0]
             if remove_ext:
                 return os.path.splitext(full_file_path)[0]  # 返回不带扩展名的文件路径
             else:

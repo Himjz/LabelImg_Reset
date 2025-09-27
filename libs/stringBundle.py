@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PySide6.QtCore import (QFile, QIODevice, QTextStream, QLocale,
-                            QStringConverter, QByteArray)
+                            QStringConverter)
 
 
 class StringBundle:

@@ -11,7 +11,8 @@ ENCODE_METHOD = DEFAULT_ENCODING
 
 
 class CreateMLWriter:
-    def __init__(self, folder_name, filename, img_size, shapes, output_file, database_src='Unknown', local_img_path=None):
+    def __init__(self, folder_name, filename, img_size, shapes, output_file, database_src='Unknown',
+                 local_img_path=None):
         self.folder_name = folder_name
         self.filename = filename
         self.database_src = database_src

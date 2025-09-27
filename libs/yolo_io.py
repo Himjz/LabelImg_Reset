@@ -8,6 +8,7 @@ from libs.constants import DEFAULT_ENCODING
 TXT_EXT = '.txt'
 ENCODE_METHOD = DEFAULT_ENCODING
 
+
 class YOLOWriter:
 
     def __init__(self, folder_name, filename, img_size, database_src='Unknown', local_img_path=None):
@@ -49,11 +50,11 @@ class YOLOWriter:
     def save(self, class_list=[], target_file=None):
 
         out_file = None  # Update yolo .txt
-        out_class_file = None   # Update class list .txt
+        out_class_file = None  # Update class list .txt
 
         if target_file is None:
             out_file = open(
-            self.filename + TXT_EXT, 'w', encoding=ENCODE_METHOD)
+                self.filename + TXT_EXT, 'w', encoding=ENCODE_METHOD)
             classes_file = os.path.join(os.path.dirname(os.path.abspath(self.filename)), "classes.txt")
             out_class_file = open(classes_file, 'w')
 
@@ -61,7 +62,6 @@ class YOLOWriter:
             out_file = codecs.open(target_file, 'w', encoding=ENCODE_METHOD)
             classes_file = os.path.join(os.path.dirname(os.path.abspath(target_file)), "classes.txt")
             out_class_file = open(classes_file, 'w')
-
 
         for box in self.box_list:
             class_index, x_center, y_center, w, h = self.bnd_box_to_yolo_line(box, class_list)
@@ -71,11 +71,10 @@ class YOLOWriter:
         # print (classList)
         # print (out_class_file)
         for c in class_list:
-            out_class_file.write(c+'\n')
+            out_class_file.write(c + '\n')
 
         out_class_file.close()
         out_file.close()
-
 
 
 class YoloReader:

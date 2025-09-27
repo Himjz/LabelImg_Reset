@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
-import sys
+import codecs
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element, SubElement
-from lxml import etree
-import codecs
-from libs.constants import DEFAULT_ENCODING
-from libs.ustr import ustr
 
+from lxml import etree
+
+from libs.constants import DEFAULT_ENCODING
 
 XML_EXT = '.xml'
 ENCODE_METHOD = DEFAULT_ENCODING
+
 
 class PascalVocWriter:
 
@@ -87,13 +87,15 @@ class PascalVocWriter:
         for each_object in self.box_list:
             object_item = SubElement(top, 'object')
             name = SubElement(object_item, 'name')
-            name.text = ustr(each_object['name'])
+            name.text = each_object['name']
             pose = SubElement(object_item, 'pose')
             pose.text = "Unspecified"
             truncated = SubElement(object_item, 'truncated')
-            if int(float(each_object['ymax'])) == int(float(self.img_size[0])) or (int(float(each_object['ymin'])) == 1):
+            if int(float(each_object['ymax'])) == int(float(self.img_size[0])) or (
+                    int(float(each_object['ymin'])) == 1):
                 truncated.text = "1"  # max == height or min
-            elif (int(float(each_object['xmax'])) == int(float(self.img_size[1]))) or (int(float(each_object['xmin'])) == 1):
+            elif (int(float(each_object['xmax'])) == int(float(self.img_size[1]))) or (
+                    int(float(each_object['xmin'])) == 1):
                 truncated.text = "1"  # max == width or min
             else:
                 truncated.text = "0"
