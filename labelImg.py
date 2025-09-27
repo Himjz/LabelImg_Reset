@@ -5,14 +5,8 @@ import codecs
 import os.path
 import platform
 import shutil
-import sys
 import webbrowser as wb
 from functools import partial
-
-# 仅保留PySide6导入
-from PySide6.QtGui import *
-from PySide6.QtCore import *
-from PySide6.QtWidgets import *
 
 from libs.combobox import ComboBox
 from libs.default_label_combobox import DefaultLabelComboBox
@@ -83,7 +77,7 @@ class MainWindow(QMainWindow, WindowMixin):
         # 目录图片浏览相关
         self.m_img_list = []
         self.dir_name = None
-        self.label_hist = []
+        self.label_hist = []  # 初始化空的标签历史列表
         self.last_open_dir = None
         self.cur_img_idx = 0
         self.img_count = len(self.m_img_list)
@@ -95,13 +89,14 @@ class MainWindow(QMainWindow, WindowMixin):
         self._beginner = True
         self.screencast = "https://youtu.be/p0nR2YsCY_U"
 
-        # 加载预定义类别
+        # 加载预定义类别 - 只使用用户提供的文件，不设置默认值
         self.load_predefined_classes(default_prefdef_class_file)
 
+        # 设置默认标签（如果有）
         if self.label_hist:
             self.default_label = self.label_hist[0]
         else:
-            print("未找到:/data/predefined_classes.txt (可选)")
+            self.default_label = ""
 
         # 主要窗口组件
         self.label_dialog = LabelDialog(parent=self, list_item=self.label_hist)
@@ -284,6 +279,10 @@ class MainWindow(QMainWindow, WindowMixin):
         show_info = action(get_str('info'), self.show_info_dialog, None, 'help', get_str('info'))
         show_shortcut = action(get_str('shortcut'), self.show_shortcuts_dialog, None, 'help', get_str('shortcut'))
 
+        # 添加加载标签文件的动作
+        load_classes = action(get_str('loadClasses'), self.load_classes_dialog,
+                             'Ctrl+Shift+C', 'open', get_str('loadClassesDetail'))
+
         zoom = QWidgetAction(self)
         zoom.setDefaultWidget(self.zoom_widget)
         self.zoom_widget.setWhatsThis(
@@ -413,8 +412,11 @@ class MainWindow(QMainWindow, WindowMixin):
         self.display_label_option.setChecked(settings.get(SETTING_PAINT_LABEL, False))
         self.display_label_option.triggered.connect(self.toggle_paint_labels_option)
 
+        # 在文件菜单添加加载标签文件的选项
         add_actions(self.menus.file,
-                    (open, open_dir, change_save_dir, open_annotation, copy_prev_bounding, self.menus.recentFiles, save,
+                    (open, open_dir, change_save_dir, open_annotation, copy_prev_bounding,
+                     load_classes,  # 添加加载标签文件的动作
+                     self.menus.recentFiles, save,
                      save_format, save_as, close, reset_all, delete_image, quit))
         add_actions(self.menus.help, (help_default, show_info, show_shortcut))
         add_actions(self.menus.view, (
@@ -907,9 +909,9 @@ class MainWindow(QMainWindow, WindowMixin):
             if text == "":
                 self.label_list.item(i).setCheckState(Qt.CheckState.Checked)
             elif text != self.label_list.item(i).text():
-                self.label_list.item(i).setCheckState(0)
+                self.label_list.item(i).setCheckState(Qt.CheckState.Checked)
             else:
-                self.label_list.item(i).setCheckState(2)
+                self.label_list.item(i).setCheckState(Qt.CheckState.Checked)
 
     def default_label_combo_selection_changed(self, index):
         self.default_label = self.label_hist[index]
@@ -1572,14 +1574,36 @@ class MainWindow(QMainWindow, WindowMixin):
         self.set_dirty()
 
     def load_predefined_classes(self, predef_classes_file):
-        if os.path.exists(predef_classes_file) is True:
+        # 只在提供了预定义类别文件且文件存在时加载
+        if predef_classes_file and os.path.exists(predef_classes_file):
             with codecs.open(predef_classes_file, 'r', 'utf8') as f:
                 for line in f:
                     line = line.strip()
-                    if self.label_hist is None:
-                        self.label_hist = [line]
-                    else:
-                        self.label_hist.append(line)
+                    if line:  # 忽略空行
+                        if self.label_hist is None:
+                            self.label_hist = [line]
+                        else:
+                            self.label_hist.append(line)
+
+    def load_classes_dialog(self):
+        """打开对话框让用户选择标签文件并加载"""
+        path = os.path.dirname(self.file_path) if self.file_path else '.'
+        filters = "标签文件 (*.txt);;所有文件 (*)"
+        filename, _ = QFileDialog.getOpenFileName(self,
+                                                 '%s - 选择标签文件' % __appname__,
+                                                 path,
+                                                 filters)
+        if filename and os.path.exists(filename):
+            # 清空现有标签历史
+            self.label_hist = []
+            # 加载新的标签文件
+            self.load_predefined_classes(filename)
+            # 更新相关组件
+            self.default_label_combo_box.update_items(self.label_hist)
+            self.label_dialog = LabelDialog(parent=self, list_item=self.label_hist)
+            if self.label_hist:
+                self.default_label = self.label_hist[0]
+            self.statusBar().showMessage(f'已加载标签文件: {filename}')
 
     def load_pascal_xml_by_filename(self, xml_path):
         if self.file_path is None:
@@ -1658,9 +1682,8 @@ def get_main_app(argv=None):
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument("image_dir", nargs="?")
-    argparser.add_argument("class_file",
-                           default=os.path.join(os.path.dirname(__file__), "data", "predefined_classes.txt"),
-                           nargs="?")
+    # 移除默认的标签文件路径，让用户显式指定
+    argparser.add_argument("class_file", nargs="?")
     argparser.add_argument("save_dir", nargs="?")
     args = argparser.parse_args(argv[1:])
 
