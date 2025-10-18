@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 from PySide6.QtCore import (QFile, QIODevice, QTextStream, QLocale,
                             QStringConverter)
 
 
 class StringBundle:
     __create_key = object()
-
     __bundle_cache = {}
 
     @classmethod
@@ -31,12 +31,21 @@ class StringBundle:
         self.__strings = {}
         self.__locale = locale_str
 
+        # 计算i18n目录的绝对路径（核心修复点）
+        # 获取当前脚本（stringBundle.py）的绝对路径
+        current_script_path = os.path.abspath(__file__)
+        # 推导项目根目录（根据实际目录结构调整层级）
+        # 假设当前脚本在 libs 目录下，项目根目录为其上级目录
+        project_root = os.path.dirname(os.path.dirname(current_script_path))
+        # 拼接i18n目录的绝对路径
+        self.i18n_root = os.path.join(project_root, "i18n")
+
         # 尝试加载特定语言的资源文件
-        base_name = "i18n/strings"
+        base_name = "strings"  # 基础文件名（不含路径和后缀）
         attempted_paths = []
 
-        # 优先先尝试完整语言代码（如zh_CN）
-        path = f"{base_name}_{locale_str}.properties"
+        # 优先尝试完整语言代码（如zh_CN）
+        path = os.path.join(self.i18n_root, f"{base_name}_{locale_str}.properties")
         attempted_paths.append(path)
         if self.__load_bundle(path):
             return
@@ -44,13 +53,13 @@ class StringBundle:
         # 尝试语言代码的主要部分（如zh）
         if '_' in locale_str:
             lang_code = locale_str.split('_')[0]
-            path = f"{base_name}_{lang_code}.properties"
+            path = os.path.join(self.i18n_root, f"{base_name}_{lang_code}.properties")
             attempted_paths.append(path)
             if self.__load_bundle(path):
                 return
 
         # 加载默认资源文件
-        path = f"{base_name}.properties"
+        path = os.path.join(self.i18n_root, f"{base_name}.properties")
         attempted_paths.append(path)
         if self.__load_bundle(path):
             return
@@ -68,7 +77,6 @@ class StringBundle:
 
         # 在PySide6中，使用QStringConverter.Encoding枚举值设置编码
         text_stream = QTextStream(file)
-        # 使用正确的枚举类型设置UTF-8编码
         text_stream.setEncoding(QStringConverter.Encoding.Utf8)
 
         while not text_stream.atEnd():

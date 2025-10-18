@@ -1,37 +1,37 @@
 [tool.poetry]
-name = "labelimg"
-version = "2.0.1.5"
-description = "Graphical image annotation tool with bounding box support"
+name = "labelImg"
+version = "2.0.2"
+description = "LabelImg is a graphical image annotation tool and label object bounding boxes in images"
 authors = ["TzuTa Lin <tzu.ta.lin@gmail.com>", "Qiang Wang <wangqiang2015@gmail.com>", "Junzhe Ye <yjz0918230128@foxmail.com>"]
 license = "MIT"
 homepage = "https://github.com/heartexlabs/labelImg"
 repository = "https://github.com/heartexlabs/labelImg"
-keywords = ["image-annotation", "bounding-box", "computer-vision", "labeling"]
+keywords = ["labelImg", "labelTool", "development", "annotation", "deeplearning", "image-annotation", "bounding-box", "computer-vision", "labeling"]
 
-# 关键修复：明确指定当前目录下的所有核心文件和目录
+# 修复：移除不存在的labelImg目录，仅保留实际存在的文件/目录
 packages = [
-    { include = "labelImg.py" },  # 主程序文件（确保文件名大小写与实际一致）
-    { include = "libs" },         # 包含libs目录及其所有内容
+    { include = "labelImg.py" },  # 主程序文件（确保根目录存在该文件）
+    { include = "libs" },         # 依赖库目录（确保该目录存在且非空）
 ]
 
+# 修复：统一资源文件打包格式，wheel和sdist都包含必要资源
 include = [
-    { path = "data", format = "wheel" },
-    { path = "i18n", format = "sdist" },   # 源码包包含
+    { path = "data/**/*", format = ["wheel", "sdist"] },  # 递归包含data下所有文件
+    { path = "i18n/**/*", format = ["wheel", "sdist"] },  # 递归包含i18n下所有文件
+    { path = "resources/icons/app.icns", format = ["wheel", "sdist"] },  # 图标文件
 ]
-
 
 [tool.poetry.scripts]
-# 修复入口点：直接指向labelImg.py中的main函数
-labelimg = "labelImg:main"  # 确保labelImg.py中存在main()函数
+# 修复：入口点路径需与实际代码结构匹配（labelImg.py中的main函数）
+labelImg = "labelImg:main"  # 若labelImg.py中直接定义main函数，无需嵌套labelImg.labelImg
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.14"
+python = ">=3.9.0,<3.14"
 PySide6 = ">=6.6.0"
 lxml = ">=5.1.0"
 pillow = ">=10.2.0"
 typing-extensions = ">=4.10.0"
 
-# 修复 deprecated 警告：使用新的分组语法
 [tool.poetry.group.dev]
 optional = true
 
@@ -43,10 +43,11 @@ isort = ">=5.13.2"
 mypy = ">=1.8.0"
 pre-commit = ">=3.6.0"
 ruff = ">=0.3.0"
+py2app = { version = "*", markers = "sys_platform == 'darwin'" }
 
 [tool.black]
 line-length = 88
-target-version = ['py310', 'py311', 'py312', 'py313']
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312', 'py313']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -63,5 +64,5 @@ line-length = 88
 target-version = "py313"
 
 [build-system]
-requires = ["poetry-core>=1.9.0"]
+requires = ["poetry-core>=1.9.0"]  # 移除setuptools依赖，纯Poetry构建
 build-backend = "poetry.core.masonry.api"
