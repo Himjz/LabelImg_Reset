@@ -8,8 +8,8 @@ class TestPascalVocRW(unittest.TestCase):
         dir_name = os.path.abspath(os.path.dirname(__file__))
         libs_path = os.path.join(dir_name, '..', 'libs')
         sys.path.insert(0, libs_path)
-        from pascal_voc_io import PascalVocWriter
-        from pascal_voc_io import PascalVocReader
+        from libs.pascal_voc_io import PascalVocWriter
+        from libs.pascal_voc_io import PascalVocReader
 
         # Test Write/Read
         writer = PascalVocWriter('tests', 'test', (512, 512, 1), local_img_path='tests/test.512.512.bmp')
@@ -35,7 +35,7 @@ class TestCreateMLRW(unittest.TestCase):
         dir_name = os.path.abspath(os.path.dirname(__file__))
         libs_path = os.path.join(dir_name, '..', 'libs')
         sys.path.insert(0, libs_path)
-        from create_ml_io import CreateMLWriter
+        from libs.create_ml_io import CreateMLWriter
 
         person = {'label': 'person', 'points': ((65, 45), (420, 45), (420, 512), (65, 512))}
         face = {'label': 'face', 'points': ((245, 250), (350, 250), (350, 365), (245, 365))}
@@ -75,7 +75,7 @@ class TestCreateMLRW(unittest.TestCase):
         dir_name = os.path.abspath(os.path.dirname(__file__))
         libs_path = os.path.join(dir_name, '..', 'libs')
         sys.path.insert(0, libs_path)
-        from create_ml_io import CreateMLReader
+        from libs.create_ml_io import CreateMLReader
 
         output_file = dir_name + "/tests.json"
         reader = CreateMLReader(output_file, 'tests/test.512.512.bmp')

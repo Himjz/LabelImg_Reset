@@ -1,5 +1,23 @@
 History
 =======
+2.2.0 (2021-10-19)
+------------------
+
+* Remove setuptools build
+
+
+2.1.0 (2024-9-28)
+------------------
+
+* Fix multilingual support when installed as a .whl package
+
+
+2.0.0 (2024-09-23)
+------------------
+
+* Reset the LabelImg tool, migrate it to PySide6
+* Ensure compatibility with higher versions of Python
+
 
 1.8.6 (2021-10-10)
 ------------------

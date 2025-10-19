@@ -18,5 +18,6 @@ class TestUtils(unittest.TestCase):
         for idx, val in enumerate(l1):
             self.assertTrue(val == expected_l1[idx])
 
+
 if __name__ == '__main__':
     unittest.main()
