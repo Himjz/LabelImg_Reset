@@ -4,15 +4,23 @@ on: [ push, pull_request ]
 jobs:
     package-macos:
         runs-on: macos-latest
-        env:
-            PIPENV_VENV_IN_PROJECT: 1
-            PIPENV_IGNORE_VIRTUALENVS: 1
         steps:
             -   uses: actions/checkout@v4
+            -   name: Set up Python 3.12
+                uses: actions/setup-python@v5
+                with:
+                    python-version: '3.12'
+            -   name: Check resource files
+                run: |
+                    if [ ! -f "resources/strings/strings.properties" ]; then
+                        echo "Error: resources/strings/strings.properties not found"
+                        exit 1
+                    fi
             -   name: Setup Python Environment
                 run: |
                     python3 -m venv .venv
                     source .venv/bin/activate
+                    pip3 install --upgrade pip
                     pip3 install pipenv
                     pipenv install pyside6==6.6.0 lxml
             -   name: Build LabelImg (PySide6)
@@ -38,10 +46,21 @@ jobs:
         runs-on: windows-latest
         steps:
             -   uses: actions/checkout@v4
+            -   name: Set up Python 3.12
+                uses: actions/setup-python@v5
+                with:
+                    python-version: '3.12'
+            -   name: Check resource files
+                run: |
+                    if (-not (Test-Path "resources/strings/strings.properties")) {
+                        Write-Error "resources/strings/strings.properties not found"
+                        exit 1
+                    }
             -   name: Setup Python Environment
                 run: |
                     python -m venv .venv
                     .venv\Scripts\activate
+                    pip install --upgrade pip
                     pip install pyinstaller pyside6==6.6.0 lxml
             -   name: Build LabelImg (PySide6)
                 run: |
@@ -60,11 +79,21 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v4
+            -   name: Set up Python 3.12
+                uses: actions/setup-python@v5
+
+            -   name: Check resource files
+                run: |
+                    if [ ! -f "resources/strings/strings.properties" ]; then
+                        echo "Error: resources/strings/strings.properties not found"
+                        exit 1
+                    fi
             -   name: Setup Python Environment
                 run: |
                     sudo apt-get update && sudo apt-get install -y libxcb-xinerama0
                     python3 -m venv .venv
                     source .venv/bin/activate
+                    pip3 install --upgrade pip
                     pip3 install pyinstaller pyside6==6.6.0 lxml
             -   name: Build LabelImg (PySide6)
                 run: |
