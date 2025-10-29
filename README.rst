@@ -68,7 +68,7 @@ Linux/Ubuntu/Mac requires at least `Python
 Ubuntu Linux
 ^^^^^^^^^^^^
 
-Python 3 + Qt5
+Python 3 + Qt6(PySide6)
 
 .. code:: shell
 
@@ -81,7 +81,7 @@ Python 3 + Qt5
 macOS
 ^^^^^
 
-Python 3 + Qt5
+Python 3 + Qt6(PySide6)
 
 .. code:: shell
 
