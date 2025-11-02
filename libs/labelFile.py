@@ -7,10 +7,10 @@ from enum import Enum
 
 from PySide6.QtGui import QImage
 
-from libs.create_ml_io import CreateMLWriter
-from libs.pascal_voc_io import PascalVocWriter
-from libs.pascal_voc_io import XML_EXT
-from libs.yolo_io import YOLOWriter
+from libs.Io.create_ml_io import CreateMLWriter
+from libs.Io.pascal_voc_io import PascalVocWriter
+from libs.Io.pascal_voc_io import XML_EXT
+from libs.Io.yolo_io import YOLOWriter
 
 
 class LabelFileFormat(Enum):

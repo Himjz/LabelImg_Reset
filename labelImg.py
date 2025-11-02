@@ -8,9 +8,8 @@ import shutil
 import webbrowser as wb
 from functools import partial
 
-from libs.combobox import ComboBox
-from libs.default_label_combobox import DefaultLabelComboBox
-from libs.resources import *
+from libs.Widget.combobox import ComboBox
+from libs.Widget.default_label_combobox import DefaultLabelComboBox
 from libs.constants import *
 from libs.utils import *
 from libs.settings import Settings
@@ -18,17 +17,17 @@ from libs.shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from libs.stringBundle import StringBundle
 from libs.canvas import Canvas
 from libs.zoomWidget import ZoomWidget
-from libs.lightWidget import LightWidget
+from libs.Widget.lightWidget import LightWidget
 from libs.labelDialog import LabelDialog
-from libs.colorDialog import ColorDialog
+from libs.Widget.colorDialog import ColorDialog
 from libs.labelFile import LabelFile, LabelFileError, LabelFileFormat
-from libs.toolBar import ToolBar
-from libs.pascal_voc_io import PascalVocReader
-from libs.pascal_voc_io import XML_EXT
-from libs.yolo_io import YoloReader
-from libs.yolo_io import TXT_EXT
-from libs.create_ml_io import CreateMLReader
-from libs.create_ml_io import JSON_EXT
+from libs.Widget.toolBar import ToolBar
+from libs.Io.pascal_voc_io import PascalVocReader
+from libs.Io.pascal_voc_io import XML_EXT
+from libs.Io.yolo_io import YoloReader
+from libs.Io.yolo_io import TXT_EXT
+from libs.Io.create_ml_io import CreateMLReader
+from libs.Io.create_ml_io import JSON_EXT
 from libs.hashableQListWidgetItem import HashableQListWidgetItem
 
 __appname__ = 'labelImg'
